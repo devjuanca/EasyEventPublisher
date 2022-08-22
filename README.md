@@ -1,4 +1,4 @@
-# EventPublisher
+# EasyEventPublisher
 This lightweight library allows you to publish events and define as many handlers as you need. It is very simple to use as defined in this example:
 
 ```
