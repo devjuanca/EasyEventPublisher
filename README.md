@@ -2,10 +2,10 @@
 This lightweight library allows you to publish events and define as many handlers as you need. It is very simple to use as defined in this example:
 
 ```
-public NotificationEvent : IEvent
+public class NotificationEvent : IEvent
 {
  public string Message {get;set}
- public Datetime Date {get;set;}
+ public DateTime Date {get;set;}
 }
 
 
