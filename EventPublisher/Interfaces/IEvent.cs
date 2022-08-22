@@ -1,6 +1,4 @@
-﻿using EventPublisher.Implementations;
-
-namespace EventPublisher.Interfaces;
+﻿namespace EasyEventPublisher.Interfaces;
 
 public interface IEvent
 {

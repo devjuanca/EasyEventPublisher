@@ -1,9 +1,9 @@
-﻿using EventPublisher.Enum;
-using EventPublisher.Interfaces;
+﻿using EasyEventPublisher.Enum;
+using EasyEventPublisher.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace EventPublisher.Implementations;
+namespace EasyEventPublisher.Implementations;
 
 public static class EventsExtension
 {

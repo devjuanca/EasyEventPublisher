@@ -1,4 +1,4 @@
-﻿namespace EventPublisher.Enum;
+﻿namespace EasyEventPublisher.Enum;
 
 public enum EventInjectingType
 {

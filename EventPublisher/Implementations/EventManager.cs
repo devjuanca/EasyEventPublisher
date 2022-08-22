@@ -1,8 +1,8 @@
-﻿using EventPublisher.Interfaces;
+﻿using EasyEventPublisher.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace EventPublisher.Implementations;
+namespace EasyEventPublisher.Implementations;
 
 public class EventManager : IEventManager
 {
