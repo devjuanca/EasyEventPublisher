@@ -1,6 +1,11 @@
 # EasyEventPublisher
 This lightweight library allows you to publish events and define as many handlers as you need. It is very simple to use as defined in this example:
 
+Install package:
+```
+Install-Package EasyEventPublisher -Version 0.0.3
+```
+
 ```
 public class NotificationEvent : IEvent
 {
