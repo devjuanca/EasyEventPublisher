@@ -5,6 +5,10 @@ VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyEventPublisher", "EventPublisher\EasyEventPublisher.csproj", "{0BB2EFB2-4AB4-4DF4-91F7-F39EEFF23853}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{D1EB32F6-AD9B-4DC5-81B5-E9407E4D99D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyEventPublisherExample", "Example\EasyEventPublisherExample\EasyEventPublisherExample.csproj", "{ABB6CDB7-D104-4F90-9DDC-EB0C0D1AEF0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +19,16 @@ Global
 		{0BB2EFB2-4AB4-4DF4-91F7-F39EEFF23853}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BB2EFB2-4AB4-4DF4-91F7-F39EEFF23853}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BB2EFB2-4AB4-4DF4-91F7-F39EEFF23853}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABB6CDB7-D104-4F90-9DDC-EB0C0D1AEF0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABB6CDB7-D104-4F90-9DDC-EB0C0D1AEF0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABB6CDB7-D104-4F90-9DDC-EB0C0D1AEF0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABB6CDB7-D104-4F90-9DDC-EB0C0D1AEF0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ABB6CDB7-D104-4F90-9DDC-EB0C0D1AEF0B} = {D1EB32F6-AD9B-4DC5-81B5-E9407E4D99D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4F10E404-BDB8-4024-BC1C-E3775B022C34}

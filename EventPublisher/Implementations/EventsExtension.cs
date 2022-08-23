@@ -13,7 +13,9 @@ public static class EventsExtension
 
         var events = Assembly.GetEntryAssembly()!.ExportedTypes.Where(a => typeof(IEvent).IsAssignableFrom(a) && !a.IsInterface && !a.IsAbstract).ToList();
 
-        events.AddRange(Assembly.GetCallingAssembly()!.ExportedTypes.Where(a => typeof(IEvent).IsAssignableFrom(a) && !a.IsInterface && !a.IsAbstract).ToList());
+        events.AddRange(Assembly.GetCallingAssembly()!.ExportedTypes.Where(a => typeof(IEvent).IsAssignableFrom(a) && !a.IsInterface && !a.IsAbstract)
+            .Where(a=> !events.Contains(a))
+            .ToList());
 
         foreach (var @eventType in events)
         {
@@ -23,6 +25,7 @@ public static class EventsExtension
 
             handlersTypes.AddRange(Assembly.GetCallingAssembly()!.ExportedTypes
                 .Where(a => a.GetInterfaces().Where(a => a.IsGenericType).Any(a => a.GetGenericArguments()[0] == eventType))
+                .Where(a=> !handlersTypes.Contains(a))
                 .ToList());
 
             if (!handlersTypes.Any())
