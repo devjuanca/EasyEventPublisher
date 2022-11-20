@@ -13,7 +13,7 @@ public class SmsNotificationHandler : IEventHandler<NotificationEvent>
 
     public Task HandleAsync(NotificationEvent @event, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("SMS Event Executed");
+        _logger.LogInformation("SMS Event Executed. Time: {time}", DateTime.UtcNow);
 
         return Task.CompletedTask;
     }

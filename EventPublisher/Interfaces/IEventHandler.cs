@@ -1,13 +1,10 @@
-﻿using EasyEventPublisher.Implementations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace EasyEventPublisher.Interfaces;
 
-namespace EasyEventPublisher.Interfaces;
-
-public interface IEventHandler<TEvent> where TEvent : IEvent
+/// <summary>
+/// This interface must be implemented to define a handler for an event.
+/// </summary>
+/// <typeparam name="TEvent"></typeparam>
+public interface IEventHandler<TEvent> where TEvent : class
 {
     Task HandleAsync(TEvent @event, CancellationToken cancellationToken);
 }

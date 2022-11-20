@@ -13,7 +13,7 @@ public class WhatsAppNotificationHandler : IEventHandler<NotificationEvent>
 
     public Task HandleAsync(NotificationEvent @event, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("WhatsApp Event Executed");
+        _logger.LogInformation("WhatsApp Event Executed. Time: {time}", DateTime.UtcNow);
 
         return Task.CompletedTask;
     }

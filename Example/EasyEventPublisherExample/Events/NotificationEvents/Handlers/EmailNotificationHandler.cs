@@ -13,7 +13,7 @@ public class EmailNotificationHandler : IEventHandler<NotificationEvent>
 
     public Task HandleAsync(NotificationEvent @event, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Email Event Executed");
+        _logger.LogInformation("Email Event Executed. Time: {time}", DateTime.UtcNow);
 
         return Task.CompletedTask;
     }

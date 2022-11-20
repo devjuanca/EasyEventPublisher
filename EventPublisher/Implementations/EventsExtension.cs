@@ -1,69 +1,79 @@
 ﻿using EasyEventPublisher.Enum;
+using EasyEventPublisher.Implementations;
 using EasyEventPublisher.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace EasyEventPublisher.Implementations;
+namespace EasyEventPublisher;
 
 public static class EventsExtension
 {
-    public static IServiceCollection RegisterEvents(this IServiceCollection services, EventInjectingType eventInyectingType = EventInjectingType.Singleton)
+    /// <summary>
+    /// Extension method to register all events found by assembly. 
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="eventInyectingType">Defines how event handlers are registered, Singleton, Scoped or Transcient.</param>
+    /// <param name="handlerAssemblyMarkerTypes">Type marker for each assembly where events must be searched.</param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public static IServiceCollection RegisterEvents(this IServiceCollection services, EventInjectingType eventInyectingType = EventInjectingType.Singleton, params Type[] handlerAssemblyMarkerTypes)
     {
         var eventsDicc = new Dictionary<Type, Type>();
 
-        var events = Assembly.GetEntryAssembly()!.ExportedTypes.Where(a => typeof(IEvent).IsAssignableFrom(a) && !a.IsInterface && !a.IsAbstract).ToList();
+        var eventAndHandlers = new List<(Type eventType, Type handlerType)>();
 
-        events.AddRange(Assembly.GetCallingAssembly()!.ExportedTypes.Where(a => typeof(IEvent).IsAssignableFrom(a) && !a.IsInterface && !a.IsAbstract)
-            .Where(a=> !events.Contains(a))
-            .ToList());
-
-        foreach (var @eventType in events)
+        foreach (var markerType in handlerAssemblyMarkerTypes)
         {
-            var handlersTypes = Assembly.GetEntryAssembly()!.ExportedTypes
-                .Where(a => a.GetInterfaces().Where(a => a.IsGenericType).Any(a => a.GetGenericArguments()[0] == eventType))
-                .ToList();
+            var assembly = Assembly.GetAssembly(markerType) ?? throw new Exception("Assembly for this type does not exist");
 
-            handlersTypes.AddRange(Assembly.GetCallingAssembly()!.ExportedTypes
-                .Where(a => a.GetInterfaces().Where(a => a.IsGenericType).Any(a => a.GetGenericArguments()[0] == eventType))
-                .Where(a=> !handlersTypes.Contains(a))
-                .ToList());
+            var eventsHandlers = assembly.DefinedTypes.Where(a => a.GetInterfaces().Select(a => a.Name).Contains("IEventHandler`1") && !a.IsInterface && !a.IsAbstract).ToList();
 
-            if (!handlersTypes.Any())
+            foreach (var handler in eventsHandlers)
             {
-                throw new Exception($"Event {eventType.Name} has no handlers defined. At least one handler must be defined in every IEvent.");
-            }
+                var eventInterface = handler.GetInterfaces().FirstOrDefault(a => a.Name == "IEventHandler`1");
 
+                if (eventInterface is null)
+                    throw new Exception("Events handlers must implement IEventHandler<TEvent>");
 
-            foreach (var item in handlersTypes)
-            {
-                var service = item.GetInterfaces().Where(a => a.IsGenericType).Where(a => a.GetGenericArguments()[0] == eventType).FirstOrDefault();
+                var eventModel = eventInterface.GetGenericArguments().First();
 
                 switch (eventInyectingType)
                 {
                     case EventInjectingType.Singleton:
                         {
-                            services.AddSingleton(service!, item);
+                            services.AddSingleton(eventInterface!, handler);
                         }
                         break;
                     case EventInjectingType.Scoped:
                         {
-                            services.AddScoped(service!, item);
+                            services.AddScoped(eventInterface!, handler);
                         }
                         break;
                     case EventInjectingType.Transcient:
                         {
-                            services.AddTransient(service!, item);
+                            services.AddTransient(eventInterface!, handler);
                         }
                         break;
                 }
+                eventsDicc.TryAdd(eventModel, eventInterface);
             }
-
-
-
-            eventsDicc.Add(eventType, handlersTypes.First().GetInterfaces().Where(a => a.IsGenericType).Where(a => a.GetGenericArguments()[0] == eventType).FirstOrDefault()!);
         }
 
-        services.AddSingleton(eventsDicc);
+        var existingDiccService = services.FirstOrDefault(a => a.ServiceType == typeof(IServiceDiccionary));
+
+        if (existingDiccService is null)
+            services.AddSingleton<IServiceDiccionary>(new ServiceDiccionary { ServiceKeyPairValues = eventsDicc });
+        else
+        {
+            var registeredDicc = (existingDiccService.ImplementationInstance as ServiceDiccionary)!.ServiceKeyPairValues;
+
+            foreach (var item in registeredDicc)
+            {
+                eventsDicc.Add(item.Key, item.Value);
+            }
+
+            services.AddSingleton<IServiceDiccionary>(new ServiceDiccionary { ServiceKeyPairValues = eventsDicc });
+        }
 
         services.AddSingleton<IEventManager, EventManager>();
 

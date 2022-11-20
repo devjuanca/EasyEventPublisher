@@ -4,19 +4,19 @@ using System.Reflection;
 
 namespace EasyEventPublisher.Implementations;
 
-public class EventManager : IEventManager
+internal class EventManager : IEventManager
 {
     private readonly Dictionary<Type, Type> _dicc;
 
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public EventManager(Dictionary<Type, Type> dicc, IServiceScopeFactory scopeFactory)
+    public EventManager(IServiceDiccionary serviceDiccionary, IServiceScopeFactory scopeFactory)
     {
-        _dicc = dicc;
+        _dicc = serviceDiccionary.ServiceKeyPairValues;
         _scopeFactory = scopeFactory;
     }
 
-    public async Task PublishAsync(IEvent @event, int paralelismDegree = 1, bool fireAndForget = false, CancellationToken cancellationToken = new())
+    public async Task PublishAsync<T>(T @event, int paralelismDegree = 1, bool fireAndForget = false, CancellationToken cancellationToken = new()) where T : class
     {
         var tasks = new List<Task>();
 
@@ -24,23 +24,20 @@ public class EventManager : IEventManager
 
         var scope = _scopeFactory.CreateScope();
 
-        //Get all handlers for the event
-
         _dicc.TryGetValue(eventType, out var handlerType);
 
         var services = scope.ServiceProvider.GetServices(handlerType!);
 
         foreach (var handlerService in services)
         {
-            var type = handlerService!.GetType();
-
-            MethodInfo methodInfo = type.GetMethod("HandleAsync")!;
+            MethodInfo methodInfo = handlerService!.GetType().GetMethod("HandleAsync")!;
 
             var task = (Task)methodInfo!.Invoke(handlerService, new object[] { @event, cancellationToken })!;
 
             if (!fireAndForget)
                 tasks.Add(task);
         }
+
 
         if (tasks.Any())
         {
