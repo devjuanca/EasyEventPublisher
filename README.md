@@ -3,17 +3,19 @@ This lightweight library allows you to publish events and define as many handler
 
 Install package:
 ```
-Install-Package EasyEventPublisher -Version 0.0.3
+Install-Package EasyEventPublisher -Version 1.0.0
 ```
 
+1. Define your events models
 ```
-public class NotificationEvent : IEvent
+public class NotificationEvent
 {
- public string Message {get;set}
- public DateTime Date {get;set;}
+ public string Message {get; set}
+ public DateTime Date {get; set;}
 }
-
-
+```
+2. Use ```IEventHandler<T>``` interface to implement event handlers that will be executed once yo publish an event of type T.
+```
 public class WhatsAppEventHandler : IEventHandler<NotificationEvent>
 {
     private ILogger<WhatsAppEventHandler> _logger { get; set; }
@@ -49,18 +51,33 @@ public class EmailEventHandler : IEventHandler<NotificationEvent>
 }
 
 
-```
+``` 
 
-In Program.cs or using an extension method of ICollectionService, events should be registered as follows:
+3. Use extension method of RegisterEvents to automatically register each event handler found in defined assembly
+
+RegisterEvents() has two parameters: EventInjectingType which is used to specify how events handlers should be registered in DI container, the possible values are:
+(Singleton, Scoped, Transcient) and params Type[] handlerAssemblyMarkerTypes which are types from assemblies where Event Handlers should me searched.
+
 ```
-services.RegisterEvents();
+var builder = WebApplication.CreateBuilder();
+
+// In this case we are registering events handlers from two different assemblies and two differents InjectingType.
+// In case EventInjectingType value is the same it can be done like this:
+// builder.Services.RegisterEvents(EventInjectingType.Singleton, typeof(Program), typeof(DummyClass));
+
+builder.Services.RegisterEvents(EventInjectingType.Singleton, typeof(Program));
+
+builder.Services.RegisterEvents(EventInjectingType.Scoped, typeof(DummyClass));
+
+var app = builder.Build();
+
+app.Run();
+
 ```
-RegisterEvents() allows a parameter of type EventInjectingType which is used to specify how events handlers should be registered in DI container, the possible values are:
-Singleton, Scoped, Transcient.
 
 By default EventInjectingType.Singleton will be used, however if you intend to inject in the event handler counstructor any scoped services (as DbContext) then the handlers should be registered as EventInjectingType.Scoped
 
-To publish events IEventManager must be injected wherever you want to publish the event like this:
+To publish events IEventManager must be injected wherever you want to publish the event just like this:
 
 ```
 public class CreateNewProductService : ICreateNewProductService
@@ -81,11 +98,12 @@ public class CreateNewProductService : ICreateNewProductService
         Date = DateTime.Now,
         Message = "New Product was added."
     },
-    fireAndForget: true, paralelismDegree: 2);
+    fireAndForget: true, paralelismDegree: 2, ctx);
   }
 }
 ```
 PublichAsync() parameters are:
-1. Event model: Entity of previosly defined class implementing IEvent.
-2. fireAndForget (boolean) : If process must await for all events handlers to finish or not.
-3. paralelismDegree: Degree of parallelism in which the handlers must execute
+1. event model:  Previosly event model class defined.
+2. fireAndForget (boolean) : If defines the behavior of events handlers, wait for all to finish execution or fire and forget.
+3. paralelismDegree: This make sense if fireAndForget is false. It defines the parallelism degree of handlers execution.
+4. cancellation token.
