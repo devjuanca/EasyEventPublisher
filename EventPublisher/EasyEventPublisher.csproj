@@ -1,13 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<VersionPrefix>1.0.0</VersionPrefix>
+		<VersionPrefix>1.0.1</VersionPrefix>
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<Authors>Juan Carlos Torres Cuervo</Authors>
+		<Description>Lightweight library that provides an easier way to publish events</Description>
+		<PackageProjectUrl>https://github.com/devjuanca/EasyEventPublisher</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/devjuanca/EasyEventPublisher</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 

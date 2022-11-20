@@ -9,7 +9,6 @@
 
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\EventPublisher\EasyEventPublisher.csproj" />
 		<ProjectReference Include="..\Domain\Domain.csproj" />
 	</ItemGroup>
 
