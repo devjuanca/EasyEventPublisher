@@ -3,7 +3,7 @@ This lightweight library allows you to publish events and define as many handler
 
 Install package:
 ```
-Install-Package EasyEventPublisher -Version 1.0.1
+Install-Package EasyEventPublisher -Version 1.0.2
 ```
 
 1. Define your events models
