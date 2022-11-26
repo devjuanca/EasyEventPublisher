@@ -1,54 +1,66 @@
 ﻿using EasyEventPublisher.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace EasyEventPublisher.Implementations;
-
-internal class EventManager : IEventManager
+namespace EasyEventPublisher.Implementations
 {
-    private readonly Dictionary<Type, Type> _dicc;
 
-    private readonly IServiceScopeFactory _scopeFactory;
-
-    public EventManager(IServiceDiccionary serviceDiccionary, IServiceScopeFactory scopeFactory)
+    internal class EventManager : IEventManager
     {
-        _dicc = serviceDiccionary.ServiceKeyPairValues;
-        _scopeFactory = scopeFactory;
-    }
+        private readonly Dictionary<Type, Type> _dicc;
 
-    public async Task PublishAsync<T>(T @event, int paralelismDegree = 1, bool fireAndForget = false, CancellationToken cancellationToken = new()) where T : class
-    {
-        var tasks = new List<Task>();
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        var eventType = @event.GetType();
-
-        var scope = _scopeFactory.CreateScope();
-
-        _dicc.TryGetValue(eventType, out var handlerType);
-
-        var services = scope.ServiceProvider.GetServices(handlerType!);
-
-        foreach (var handlerService in services)
+        public EventManager(IServiceDiccionary serviceDiccionary, IServiceScopeFactory scopeFactory)
         {
-            MethodInfo methodInfo = handlerService!.GetType().GetMethod("HandleAsync")!;
-
-            var task = (Task)methodInfo!.Invoke(handlerService, new object[] { @event, cancellationToken })!;
-
-            if (!fireAndForget)
-                tasks.Add(task);
+            _dicc = serviceDiccionary.ServiceKeyPairValues;
+            _scopeFactory = scopeFactory;
         }
 
-
-        if (tasks.Any())
+        public async Task PublishAsync<T>(T @event, int paralelismDegree = 1, bool fireAndForget = false, CancellationToken cancellationToken = new CancellationToken()) where T : class
         {
-            var chunckedTasks = tasks.Chunk(paralelismDegree);
+            var tasks = new List<Task>();
 
-            foreach (var chtasks in chunckedTasks)
+            var eventType = @event.GetType();
+
+            var scope = _scopeFactory.CreateScope();
+
+            _dicc.TryGetValue(eventType, out Type handlerType);
+
+            var services = scope.ServiceProvider.GetServices(handlerType).ToArray();
+
+            for (int i = 0; i < services.Length; i++)
             {
-                await Task.WhenAll(chtasks);
+                MethodInfo methodInfo = services[i].GetType().GetMethod("HandleAsync");
+
+                var task = (Task)methodInfo.Invoke(services[i], new object[] { @event, cancellationToken });
+
+                if (!fireAndForget)
+                    tasks.Add(task);
             }
+
+
+            if (tasks.Any())
+            {
+                var chunckedTasks = tasks.Chunk(paralelismDegree);
+
+                for (int i = 0; i < chunckedTasks.Length; i++)
+                {
+                    await Task.WhenAll(chunckedTasks[i]);
+                }
+
+            }
+
+
         }
 
-
     }
+
+
+
 }

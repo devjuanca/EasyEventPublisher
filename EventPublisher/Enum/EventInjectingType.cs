@@ -1,6 +1,8 @@
-﻿namespace EasyEventPublisher.Enum;
-
-public enum EventInjectingType
+﻿namespace EasyEventPublisher.Enum
 {
-    Singleton, Scoped, Transcient
+
+    public enum EventInjectingType
+    {
+        Singleton, Scoped, Transcient
+    }
 }

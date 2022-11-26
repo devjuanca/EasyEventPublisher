@@ -1,6 +1,11 @@
-﻿namespace EasyEventPublisher.Interfaces;
+﻿using System;
+using System.Collections.Generic;
 
-internal interface IServiceDiccionary
+namespace EasyEventPublisher.Interfaces
 {
-    Dictionary<Type, Type> ServiceKeyPairValues { get; set; }
+
+    internal interface IServiceDiccionary
+    {
+        Dictionary<Type, Type> ServiceKeyPairValues { get; set; }
+    }
 }

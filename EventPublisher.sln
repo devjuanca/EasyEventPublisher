@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{D1EB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyEventPublisherExample", "Example\EasyEventPublisherExample\EasyEventPublisherExample.csproj", "{ABB6CDB7-D104-4F90-9DDC-EB0C0D1AEF0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Example\Domain\Domain.csproj", "{5AE3CFD7-5C13-42D0-A945-4230ADF7E6D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Example\Domain\Domain.csproj", "{5AE3CFD7-5C13-42D0-A945-4230ADF7E6D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
