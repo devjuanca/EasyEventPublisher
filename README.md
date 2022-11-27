@@ -6,8 +6,6 @@ Install package:
 Install-Package EasyEventPublisher -Version 1.0.3
 ```
 
-Compatibility: netstandard2.0
-
 1. Define your events models
 ```
 public class NotificationEvent
