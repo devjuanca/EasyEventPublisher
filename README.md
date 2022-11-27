@@ -14,11 +14,11 @@ public class NotificationEvent
  public DateTime Date {get; set;}
 }
 ```
-2. Use ```IEventHandler<T>``` interface to implement event handlers that will be executed once yo publish an event of type T.
+2. Use ```IEventHandler<T>``` interface to implement event handlers that will be executed once yo publish an event of type T (class).
 ```
 public class WhatsAppEventHandler : IEventHandler<NotificationEvent>
 {
-    private ILogger<WhatsAppEventHandler> _logger { get; set; }
+    private ILogger<WhatsAppEventHandler> _logger;
 
     public WhatsAppEventHandler(ILogger<WhatsAppEventHandler> logger)
     {
